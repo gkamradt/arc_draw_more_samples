@@ -10,7 +10,7 @@ from itertools import cycle
 from typing import Optional, Union
 
 import attrs
-from openai import OpenAI
+from langsmith.wrappers.openai import openai
 import requests
 import tiktoken
 from openai.openai_object import OpenAIObject as OpenAICompletion
@@ -32,8 +32,6 @@ OAIChatPrompt = list[dict[str, str]]
 OAIBasePrompt = Union[str, list[str]]
 
 DISABLE_POST = True
-
-openai = wrappers.wrap_openai(OpenAI())
 
 def post_json_in_background(url, json_data):
     if DISABLE_POST:
