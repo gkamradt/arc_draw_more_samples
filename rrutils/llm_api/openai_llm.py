@@ -72,6 +72,10 @@ def price_per_token(model_id: str) -> tuple[float, float]:
     """
     if model_id.startswith("gpt-4-32k"):
         prices = 0.06, 0.12
+    elif model_id.startswith("gpt-4o-mini"):
+        prices = 0.00015, 0.0006
+    elif model_id.startswith("gpt-4o-mini-2024-07-18"):
+        prices = 0.00015, 0.0006
     elif model_id.startswith("gpt-4-turbo"):
         prices = 0.01, 0.03
     elif model_id.startswith("gpt-4o"):
