@@ -10,11 +10,14 @@ from itertools import cycle
 from typing import Optional, Union
 
 import attrs
-import openai
+from openai import OpenAI
 import requests
 import tiktoken
 from openai.openai_object import OpenAIObject as OpenAICompletion
 from termcolor import cprint
+
+from langsmith import wrappers
+from langsmith import traceable
 
 from rrutils.llm_api.base_llm import (
     PRINT_COLORS,
@@ -30,6 +33,7 @@ OAIBasePrompt = Union[str, list[str]]
 
 DISABLE_POST = True
 
+openai = wrappers.wrap_openai(OpenAI())
 
 def post_json_in_background(url, json_data):
     if DISABLE_POST:
@@ -158,6 +162,7 @@ class OpenAIModel(ModelAPIProtocol):
     def _count_prompt_token_capacity(prompt, **kwargs) -> int:
         raise NotImplementedError
 
+    @traceable(name="OpenAIModel._make_api_call")
     async def _make_api_call(self, prompt, model_id, **params) -> list[LLMResponse]:
         raise NotImplementedError
 
@@ -193,6 +198,7 @@ class OpenAIModel(ModelAPIProtocol):
                 await asyncio.sleep((i + 2) * random.random())
         raise RuntimeError(f"Failed to get dummy response header for {model_id} after {attempts} attempts.")
 
+    @traceable(name="OpenAIModel.__call__")
     async def __call__(
         self,
         model_ids: list[str],
@@ -293,26 +299,29 @@ class OpenAIModel(ModelAPIProtocol):
 
 
 _GPT_4_MODELS = [
-    "gpt-4",
-    "gpt-4-0314",
-    "gpt-4-0613",
-    "gpt-4-32k",
-    "gpt-4-32k-0314",
-    "gpt-4-32k-0613",
-    "gpt-4-1106-preview",
-    "gpt-4-0125-preview",
-    "gpt-4-turbo-preview",
-    "gpt-4-turbo",
-    "gpt-4-turbo-2024-04-09",
-    "gpt-4o-2024-05-13",
-    "gpt-4o",
+    # "gpt-4",
+    # "gpt-4-0314",
+    # "gpt-4-0613",
+    # "gpt-4-32k",
+    # "gpt-4-32k-0314",
+    # "gpt-4-32k-0613",
+    # "gpt-4-1106-preview",
+    # "gpt-4-0125-preview",
+    # "gpt-4-turbo-preview",
+    # "gpt-4-turbo",
+    # "gpt-4-turbo-2024-04-09",
+    # "gpt-4o-2024-05-13",
+    # "gpt-4o",
+    "gpt-4o-mini",
+    "gpt-4o-mini-2024-07-18"
+
 ]
 _GPT_TURBO_MODELS = [
-    "gpt-3.5-turbo",
-    "gpt-3.5-turbo-0613",
-    "gpt-3.5-turbo-16k",
-    "gpt-3.5-turbo-16k-0613",
-    "gpt-3.5-turbo-0125",
+    # "gpt-3.5-turbo",
+    # "gpt-3.5-turbo-0613",
+    # "gpt-3.5-turbo-16k",
+    # "gpt-3.5-turbo-16k-0613",
+    # "gpt-3.5-turbo-0125",
 ]
 GPT_CHAT_MODELS = set(_GPT_4_MODELS + _GPT_TURBO_MODELS)
 
@@ -390,6 +399,7 @@ class OpenAIChatModel(OpenAIModel):
             max_tokens = 15
         return max(MIN_NUM_TOKENS, int(num_tokens + BUFFER) + kwargs.get("n", 1) * min(max_tokens, 2000)) # obviously very hacky
 
+    @traceable(name="OpenAIChatModel._make_api_call")
     async def _make_api_call(
         self, prompt: OAIChatPrompt, model_id, stream_per_chunk_timeout: Optional[float] = None, non_streaming_timeout:Optional[float] = 600.0, **params
     ) -> list[LLMResponse]:
@@ -485,6 +495,7 @@ class OpenAIBaseModel(OpenAIModel):
             prompt_tokens = sum(len(tokenizer.encode(p)) for p in prompt)
             return prompt_tokens + completion_tokens
 
+    @traceable(name="OpenAIBaseModel._make_api_call")
     async def _make_api_call(
         self, prompt: OAIBasePrompt, model_id, stream_per_chunk_timeout: Optional[float] = None, **params
     ) -> list[LLMResponse]:
