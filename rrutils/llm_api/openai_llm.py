@@ -26,9 +26,6 @@ from rrutils.llm_api.base_llm import (
 )
 
 from langsmith import traceable
-from langsmith.wrappers import wrap_openai
-
-openai = wrap_openai(openai)
 
 OAIChatPrompt = list[dict[str, str]]
 OAIBasePrompt = Union[str, list[str]]
