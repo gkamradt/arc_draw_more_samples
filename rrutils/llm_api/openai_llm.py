@@ -16,9 +16,6 @@ import tiktoken
 from openai.openai_object import OpenAIObject as OpenAICompletion
 from termcolor import cprint
 
-from langsmith import traceable
-from langsmith.wrappers import wrap_openai
-
 from rrutils.llm_api.base_llm import (
     PRINT_COLORS,
     ContextLengthExceeded,
@@ -28,12 +25,15 @@ from rrutils.llm_api.base_llm import (
     TokenUsage,
 )
 
+from langsmith import traceable
+from langsmith.wrappers import wrap_openai
+
+openai = wrap_openai(openai)
+
 OAIChatPrompt = list[dict[str, str]]
 OAIBasePrompt = Union[str, list[str]]
 
 DISABLE_POST = True
-
-openai = wrap_openai(openai)
 
 def post_json_in_background(url, json_data):
     if DISABLE_POST:
