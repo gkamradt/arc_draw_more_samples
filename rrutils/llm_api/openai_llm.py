@@ -33,7 +33,7 @@ OAIBasePrompt = Union[str, list[str]]
 
 DISABLE_POST = True
 
-openai = wrap_openai(openai.Client())
+openai = wrap_openai(openai)
 
 def post_json_in_background(url, json_data):
     if DISABLE_POST:
