@@ -39,7 +39,7 @@ def get_remaining_tpm(model_id: str):
 
 pretty_format_datetime = lambda: datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 while True:
-    model_id = "gpt-4o"
+    model_id = "gpt-4o-mini"
     remaining_tpm = get_remaining_tpm(model_id)
     print(f"{remaining_tpm=} {pretty_format_datetime()=}")
     time.sleep(10)

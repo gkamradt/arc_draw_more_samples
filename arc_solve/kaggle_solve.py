@@ -920,7 +920,7 @@ submission_dict = make_submission_dict(
 
 import tiktoken
 
-tokenizer = tiktoken.encoding_for_model("gpt-4o")
+tokenizer = tiktoken.encoding_for_model("gpt-4o-mini")
 
 total_output_tokens = sum(
     len(tokenizer.encode(reasoning))

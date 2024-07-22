@@ -74,7 +74,7 @@ async def call(
     t: float = 0.0,
     max_tokens: Optional[int] = 4096,  # change as needed
     n: int = 1,
-    model_ids: list[str] = ["gpt-4o-2024-05-13"],
+    model_ids: list[str] = ["gpt-4o-mini"],
     **kwargs,
 ):
     if n == 0:
@@ -387,7 +387,7 @@ def spreadsheet_ascii_grid_as_color_by_location(grid: np.ndarray):
     return out
 
 
-tokenizer = tiktoken.encoding_for_model("gpt-4o")
+tokenizer = tiktoken.encoding_for_model("gpt-4o-mini")
 
 # [tokenizer.decode([x]) for x in tokenizer.encode("A1 ... A7")]
 
