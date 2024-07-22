@@ -10,14 +10,14 @@ from itertools import cycle
 from typing import Optional, Union
 
 import attrs
-from langsmith.wrappers.openai import openai
+import openai
 import requests
 import tiktoken
 from openai.openai_object import OpenAIObject as OpenAICompletion
 from termcolor import cprint
 
-from langsmith import wrappers
 from langsmith import traceable
+from langsmith.wrappers import wrap_openai
 
 from rrutils.llm_api.base_llm import (
     PRINT_COLORS,
@@ -32,6 +32,8 @@ OAIChatPrompt = list[dict[str, str]]
 OAIBasePrompt = Union[str, list[str]]
 
 DISABLE_POST = True
+
+openai = wrap_openai(openai.Client())
 
 def post_json_in_background(url, json_data):
     if DISABLE_POST:
